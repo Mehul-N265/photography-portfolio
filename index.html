@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Photography Portfolio</title>
+<meta name="description" content="Photography portfolio">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --wall:#ecedee;
+  --ink:#1c1e21;
+  --mute:#6b6f75;
+  --line:#cfd1d4;
+  --stage:#101113;
+  --font:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--wall);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+
+/* ---------- Hero ---------- */
+.hero{position:relative;min-height:100vh;min-height:100svh;display:flex;align-items:flex-end;background:var(--stage);color:#fff;overflow:hidden}
+.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;cursor:zoom-in}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.65),rgba(0,0,0,0) 55%);pointer-events:none}
+.hero-text{position:relative;z-index:1;width:100%;padding:0 clamp(20px,5vw,64px) clamp(28px,6vh,64px);pointer-events:none}
+.hero h1{font-weight:800;font-size:clamp(3rem,13vw,11rem);line-height:.9;letter-spacing:-.035em}
+.hero p{margin-top:1rem;font-size:clamp(1rem,2vw,1.35rem);font-weight:300;max-width:34ch}
+.hero nav{position:absolute;z-index:2;top:0;right:0;padding:clamp(16px,3vw,32px) clamp(20px,5vw,64px);display:flex;gap:1.5rem;font-size:.95rem}
+.hero nav a{color:#fff;text-decoration:none;text-shadow:0 1px 8px rgba(0,0,0,.5)}
+.hero nav a:hover{text-decoration:underline;text-underline-offset:5px}
+.hero.empty{background:#2a2c30}
+
+/* ---------- Gallery ---------- */
+section{padding:clamp(48px,9vw,120px) clamp(20px,5vw,64px)}
+.head{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;margin-bottom:clamp(24px,4vw,48px);border-bottom:1px solid var(--line);padding-bottom:1rem}
+.head h2{font-weight:600;font-size:clamp(1.6rem,3.5vw,2.4rem);letter-spacing:-.02em}
+.head span{color:var(--mute);font-size:.95rem}
+.grid{columns:3 320px;column-gap:clamp(12px,1.6vw,22px)}
+.shot{break-inside:avoid;margin-bottom:clamp(12px,1.6vw,22px);position:relative;background:#dcdee0;min-height:140px}
+.shot button{display:block;width:100%;border:0;background:none;cursor:zoom-in;padding:0}
+.shot img{display:block;width:100%;height:auto}
+.shot figcaption{font-size:.85rem;color:var(--mute);padding-top:.4rem}
+.shot.missing{padding:2rem 1rem;text-align:center;color:var(--mute);font-size:.9rem;border:1px dashed var(--mute);background:none}
+.shot.missing button{display:none}
+.shot.missing::before{content:"Photo not found. Check the file name:";display:block;margin-bottom:.4rem}
+.shot.missing .path{font-weight:600;color:var(--ink);word-break:break-all}
+
+/* ---------- About / Contact ---------- */
+.about{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:clamp(24px,6vw,96px);border-top:1px solid var(--line)}
+.about h2{font-weight:600;font-size:clamp(1.6rem,3.5vw,2.4rem);letter-spacing:-.02em}
+.about p{max-width:60ch;font-size:1.1rem}
+.about p+p{margin-top:1rem}
+.links{margin-top:2rem;display:flex;flex-wrap:wrap;gap:.6rem}
+.links a{display:inline-block;padding:.6rem 1.1rem;border:1px solid var(--ink);border-radius:999px;text-decoration:none;font-weight:400;transition:background .2s,color .2s}
+.links a:hover{background:var(--ink);color:var(--wall)}
+footer{padding:24px clamp(20px,5vw,64px) 40px;color:var(--mute);font-size:.85rem}
+@media (max-width:760px){.about{grid-template-columns:1fr}.hero nav{gap:1rem}}
+
+/* ---------- Lightbox ---------- */
+.lb{position:fixed;inset:0;z-index:50;background:rgba(10,10,12,.96);display:none;flex-direction:column;color:#fff}
+.lb.open{display:flex}
+.lb-stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:clamp(8px,3vw,40px) clamp(8px,6vw,90px) 0;touch-action:pan-y}
+.lb-stage img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;user-select:none}
+.lb-bar{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:14px clamp(16px,4vw,40px) 18px;font-size:.95rem}
+.lb-bar .t{opacity:.9}
+.lb-bar .c{opacity:.55;white-space:nowrap}
+.lb button.ctl{position:absolute;background:rgba(255,255,255,.08);border:0;color:#fff;width:46px;height:46px;border-radius:50%;font-size:1.4rem;cursor:pointer;display:grid;place-items:center}
+.lb button.ctl:hover{background:rgba(255,255,255,.2)}
+.lb .x{top:14px;right:14px}
+.lb .p{left:12px;top:50%;transform:translateY(-50%)}
+.lb .n{right:12px;top:50%;transform:translateY(-50%)}
+@media (max-width:600px){.lb .p,.lb .n{top:auto;bottom:62px;transform:none}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="hero" id="hero">
+  <nav aria-label="Page">
+    <a href="#work">Work</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <div class="hero-text">
+    <h1 id="name"></h1>
+    <p id="tagline"></p>
+  </div>
+</header>
+
+<section id="work">
+  <div class="head">
+    <h2>Selected work</h2>
+    <span id="count"></span>
+  </div>
+  <div class="grid" id="grid"></div>
+</section>
+
+<section class="about" id="about">
+  <h2>About</h2>
+  <div id="bio"></div>
+</section>
+
+<section id="contact" style="padding-top:0">
+  <div class="head" style="margin-bottom:1.2rem"><h2>Contact</h2></div>
+  <div class="links" id="links" style="margin-top:0"></div>
+</section>
+
+<footer id="foot"></footer>
+
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Photo viewer">
+  <button class="ctl x" id="lbClose" aria-label="Close">&times;</button>
+  <button class="ctl p" id="lbPrev" aria-label="Previous photo">&#8592;</button>
+  <button class="ctl n" id="lbNext" aria-label="Next photo">&#8594;</button>
+  <div class="lb-stage" id="lbStage"><img id="lbImg" alt=""></div>
+  <div class="lb-bar"><span class="t" id="lbTitle"></span><span class="c" id="lbCount"></span></div>
+</div>
+
+<script>
+/* =====================================================================
+   EDIT THIS BLOCK ONLY. Everything below it just reads from here.
+   ===================================================================== */
+const SITE = {
+  name: "Mehul",
+  tagline: "Photography, NIT Calicut",
+
+  bio: [
+    "I’m a first year student at NIT Calicut and I photograph whatever stops me for a second: people, light, and small moments on campus and beyond."
+    
+  ],
+
+  // Leave any of these as "" to hide the button.
+  contact: {
+    instagram: "https://instagram.com/_immehul18",
+    other: ""            // e.g. a Drive link with full-size originals
+  },
+
+  // Put your original files in the /photos folder and list them here.
+  // title is optional. The FIRST photo is used as the cover.
+  photos: [
+    { file: "photos/2700.jpg", title: "" },
+    { file: "photos/2800.jpg", title: "" },
+    { file: "photos/2900.jpg", title: "" },
+    { file: "photos/2901.jpg", title: "" },
+    { file: "photos/30690.jpg", title: "" },
+    { file: "photos/3603.jpg", title: "" },
+    
+    { file: "photos/31544.jpg", title: "" },
+    { file: "photos/32437.jpg", title: "" },
+    { file: "photos/34602.jpg", title: "" },
+    { file: "photos/37002.jpg", title: "" },
+    { file: "photos/37004.jpg", title: "" },
+    { file: "photos/37005.jpg", title: "" },
+    { file: "photos/37006.jpg", title: "" },
+    { file: "photos/20261011_225427.jpg", title: "" },
+    { file: "photos/20261012_035726.jpg", title: "" },
+    { file: "photos/20261018_200605.jpg", title: "" },
+    { file: "photos/20261019_205034.jpg", title: "" },
+    { file: "photos/20261019_224235.jpg", title: "" },
+    { file: "photos/20261021_182011.jpg", title: "" }
+  ],
+
+  // Which part of the cover photo stays visible on tall/narrow screens.
+  coverFocus: "center"   // "center", "top", "bottom", "left", "right", or e.g. "30% 40%"
+};
+/* ===================================================================== */
+
+(function(){
+  const $ = id => document.getElementById(id);
+  const P = SITE.photos;
+
+  document.title = SITE.name + " | Photography";
+  $("name").textContent = SITE.name;
+  $("tagline").textContent = SITE.tagline;
+  $("count").textContent = P.length + (P.length === 1 ? " photo" : " photos");
+  SITE.bio.forEach(t => { const p = document.createElement("p"); p.textContent = t; $("bio").appendChild(p); });
+  $("foot").textContent = "© " + new Date().getFullYear() + " " + SITE.name + ". All photographs belong to the photographer.";
+
+  const labels = { email: "Email", instagram: "Instagram", other: "More photos" };
+  Object.keys(labels).forEach(k => {
+    const v = SITE.contact[k]; if (!v) return;
+    const a = document.createElement("a");
+    a.href = k === "email" ? "mailto:" + v : v;
+    a.textContent = labels[k];
+    if (k !== "email") { a.target = "_blank"; a.rel = "noopener"; }
+    $("links").appendChild(a);
+  });
+
+  /* Hero: original file, only cropped by CSS to fill the screen */
+  const hero = $("hero");
+  if (P.length) {
+    const h = new Image();
+    h.alt = P[0].title || "Cover photo";
+    h.decoding = "async";
+    h.style.objectPosition = SITE.coverFocus;
+    h.onerror = () => { h.remove(); hero.classList.add("empty"); };
+    h.onclick = () => open(0);
+    h.src = P[0].file;
+    hero.prepend(h);
+  } else hero.classList.add("empty");
+
+  /* Gallery: natural aspect ratios, no cropping, no resizing of the files */
+  P.forEach((ph, i) => {
+    const f = document.createElement("figure");
+    f.className = "shot";
+    const b = document.createElement("button");
+    b.type = "button";
+    b.setAttribute("aria-label", "View photo " + (i + 1) + (ph.title ? ": " + ph.title : ""));
+    const im = document.createElement("img");
+    im.alt = ph.title || "Photo " + (i + 1);
+    im.decoding = "async";
+    if (i > 5) im.loading = "lazy";
+    im.onerror = () => {
+      f.classList.add("missing");
+      const s = document.createElement("div"); s.className = "path"; s.textContent = ph.file;
+      f.appendChild(s);
+      im.remove();
+    };
+    im.src = ph.file;
+    b.appendChild(im);
+    b.onclick = () => open(i);
+    f.appendChild(b);
+    if (ph.title) { const c = document.createElement("figcaption"); c.textContent = ph.title; f.appendChild(c); }
+    $("grid").appendChild(f);
+  });
+
+  /* Lightbox: shows the original file, scaled down by the browser only to fit the screen */
+  const lb = $("lb"), lbImg = $("lbImg");
+  let cur = 0, lastFocus = null;
+
+  function show(i){
+    cur = (i + P.length) % P.length;
+    lbImg.src = P[cur].file;
+    lbImg.alt = P[cur].title || "Photo " + (cur + 1);
+    $("lbTitle").textContent = P[cur].title || "";
+    $("lbCount").textContent = (cur + 1) + " / " + P.length;
+    [cur + 1, cur - 1].forEach(j => { const k = (j + P.length) % P.length; new Image().src = P[k].file; });
+  }
+  function open(i){
+    if (!P.length) return;
+    lastFocus = document.activeElement;
+    lb.classList.add("open");
+    document.body.style.overflow = "hidden";
+    show(i);
+    $("lbClose").focus();
+  }
+  function close(){
+    lb.classList.remove("open");
+    document.body.style.overflow = "";
+    lbImg.removeAttribute("src");
+    if (lastFocus) lastFocus.focus();
+  }
+  $("lbClose").onclick = close;
+  $("lbPrev").onclick = () => show(cur - 1);
+  $("lbNext").onclick = () => show(cur + 1);
+  $("lbStage").onclick = e => { if (e.target === $("lbStage")) close(); };
+  document.addEventListener("keydown", e => {
+    if (!lb.classList.contains("open")) return;
+    if (e.key === "Escape") close();
+    else if (e.key === "ArrowLeft") show(cur - 1);
+    else if (e.key === "ArrowRight") show(cur + 1);
+  });
+  let sx = null;
+  $("lbStage").addEventListener("touchstart", e => { sx = e.touches[0].clientX; }, {passive:true});
+  $("lbStage").addEventListener("touchend", e => {
+    if (sx === null) return;
+    const dx = e.changedTouches[0].clientX - sx; sx = null;
+    if (Math.abs(dx) > 50) show(cur + (dx < 0 ? 1 : -1));
+  });
+})();
+</script>
+</body>
+</html>
